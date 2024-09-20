@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% include 'parts/nav.html '%}
+<div style="direction: rtl;" class="wrapper">
+    <div class="content-wrapper p-5">
+        <!-- Header Section with Logout Button on the Right -->
+        <div class="d-flex justify-content-between mb-3">
+            <!-- Right Section for Logout Button -->
+            <div>
+                
+            </div>
+            <div>
+                <form action="{% url 'student_logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">تسجيل الخروج</button>
+                </form>
+            </div>
+        </div>
+
+        <h2>لوحة تحكم الطالب</h2>
+
+        <!-- Available Books Section -->
+        <h3>الكتب المتاحة</h3>
+        <a href="{% url 'student_books' %}" class="btn btn-primary mb-3">عرض جميع الكتب</a>
+
+        <!-- Borrowed Books Section -->
+        <h3>الكتب المستعارة</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>عنوان الكتاب</th>
+                    <th>تاريخ الاستعارة</th>
+                    <th>تاريخ الاستحقاق</th>
+                    <th>الحالة</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for borrow in borrowed_books %}
+                <tr>
+                    <td>{{ borrow.book.title }}</td>
+                    <td>{{ borrow.borrow_date }}</td>
+                    <td>{{ borrow.due_date }}</td>
+                    <td>
+                        {% if borrow.due_date < timezone.now %}
+                        <span class="badge badge-danger">متأخر</span>
+                        {% else %}
+                        <span class="badge badge-success">ساري</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">لا توجد كتب مستعارة حاليًا.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Borrow History Section -->
+        <h3>تاريخ الاستعارات</h3>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>عنوان الكتاب</th>
+                    <th>تاريخ الاستعارة</th>
+                    <th>تاريخ الإرجاع</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for borrow in borrow_history %}
+                <tr>
+                    <td>{{ borrow.book.title }}</td>
+                    <td>{{ borrow.borrow_date }}</td>
+                    <td>{{ borrow.return_date }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3">لا توجد استعارات سابقة.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Notifications Section -->
+        <h3>الإشعارات</h3>
+        <ul>
+            {% for overdue in overdue_books %}
+            <li>لديك كتاب متأخر: {{ overdue.book.title }} كان يجب إرجاعه بتاريخ {{ overdue.due_date }}</li>
+            {% empty %}
+            <li>لا توجد كتب متأخرة حالياً.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% include 'parts/sidebar.html '%}
+{% endblock %}

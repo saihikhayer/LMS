@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% include 'parts/navadmin.html '%}
+<div style="direction: rtl;" class="wrapper">
+    <div class="content-wrapper p-5">
+        <!-- Header Section with Logout Button on the Right -->
+        <div class="d-flex justify-content-between mb-3">
+            <div>
+                <h1>لوحة التحكم</h1>
+            </div>
+            <div>
+                <form action="{% url 'admin_logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">تسجيل الخروج</button>
+                </form>
+            </div>
+        </div>
+
+        <section class="content">
+            <div class="card card-solid">
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Total Books -->
+                        <div class="col-md-4">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-primary"><i class="fas fa-book"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">إجمالي الكتب</span>
+                                    <span class="info-box-number">{{ total_books }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Categories -->
+                        <div class="col-md-4">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-success"><i class="fas fa-tags"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">إجمالي التصنيفات</span>
+                                    <span class="info-box-number">{{ total_categories }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Borrowed Books -->
+                        <div class="col-md-4">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-warning"><i class="fas fa-book-reader"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">الكتب المستعارة</span>
+                                    <span class="info-box-number">{{ total_borrowed_books }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add buttons for "Add Book", "Manage Categories", and "View Borrowed Books" -->
+                    <div class="row mt-4">
+                        <div class="col-md-4">
+                            <a href="{% url 'add_book' %}" class="btn btn-primary btn-block">
+                                <i class="fas fa-plus"></i> إضافة كتاب
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="{% url 'manage_categories' %}" class="btn btn-success btn-block">
+                                <i class="fas fa-tags"></i> إدارة التصنيفات
+                            </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="{% url 'admin_view_borrowed_books' %}" class="btn btn-warning btn-block">
+                                <i class="fas fa-eye"></i> عرض الكتب المستعارة
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Borrowed Books per Category Chart -->
+                    <h3 class="mt-5">عدد الكتب المستعارة لكل تصنيف</h3>
+                    <div style="width: 300px; margin: 0 auto;">
+                        <canvas id="borrowedBooksCategoryChart"></canvas>
+                    </div>
+
+                    <!-- Most Borrowed Books Chart -->
+                    <h3 class="mt-5">أكثر الكتب استعارة</h3>
+                    <div style="width: 500px; margin: 0 auto;">
+                        <canvas id="mostBorrowedBooksChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<!-- Include Chart.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Data for Borrowed Books per Category
+    var categoryLabels = [
+        {% for category in borrowed_books_per_category %}
+            "{{ category.book__category__name }}"{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+    var categoryData = [
+        {% for category in borrowed_books_per_category %}
+            {{ category.count }}{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    // Data for Most Borrowed Books
+    var bookLabels = [
+        {% for book in most_borrowed_books %}
+            "{{ book.book__title }}"{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+    var bookData = [
+        {% for book in most_borrowed_books %}
+            {{ book.count }}{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    // Borrowed Books per Category Chart
+    var ctxCategory = document.getElementById('borrowedBooksCategoryChart').getContext('2d');
+    var categoryChart = new Chart(ctxCategory, {
+        type: 'doughnut',
+        data: {
+            labels: categoryLabels,
+            datasets: [{
+                data: categoryData,
+                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                }
+            }
+        }
+    });
+
+    // Most Borrowed Books Chart
+    var ctxBooks = document.getElementById('mostBorrowedBooksChart').getContext('2d');
+    var booksChart = new Chart(ctxBooks, {
+        type: 'bar',
+        data: {
+            labels: bookLabels,
+            datasets: [{
+                label: 'عدد الاستعارات',
+                data: bookData,
+                backgroundColor: '#36A2EB',
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false,
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% include 'parts/sidebaradmin.html '%}
+{% endblock %}

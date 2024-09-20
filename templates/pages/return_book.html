@@ -1,0 +1,17 @@
+<!-- lms_app/templates/pages/return_book.html -->
+{% extends 'base.html' %}
+{% block content %}
+{% include 'parts/nav.html '%}
+
+<div class="content-wrapper p-5" style="direction: rtl;">
+    <div class="container mt-5">
+        <h2>إرجاع الكتاب</h2>
+        <p>هل أنت متأكد أنك تريد إرجاع الكتاب <strong>{{ borrow.book.title }}</strong>؟</p>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">إرجاع الكتاب</button>
+            <a href="{% url 'student_view_borrowed_books' %}" class="btn btn-secondary">إلغاء</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

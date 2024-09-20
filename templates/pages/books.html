@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% include 'parts/navadmin.html '%}
+
+    <div class="content-wrapper p-5">
+        <!-- Page Header -->
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1 class="text-primary">الكتب</h1>
+            </div>
+        </div>
+        
+        <!-- Main content -->
+        <section class="content">
+            <!-- Default box -->
+            <div class="card card-solid">
+                <div class="card-body pb-0">
+                    <div class="row d-flex align-items-stretch">
+                        {% if books %}
+                            {% for book in books %}
+                            <!-- Book start -->
+                            <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch mb-3">
+                                <div class="card bg-light">
+                                    <div class="card-header text-muted border-bottom-0">
+                                        {{ book.category }}
+                                    </div>
+                                    <div class="card-body pt-0">
+                                        <div class="row">
+                                            <div class="col-7">
+                                                <h2 class="lead"><b>{{ book.title }}</b></h2>
+                                                <ul class="fa-ul text-muted">
+                                                    <li class="small"><span class="fa-li"></span> الحالة: {{ book.status }}</li>
+                                                    {% if book.available_copies == 0 %}
+                                                    <li class="small"><span class="fa-li"></span> الكتاب مستأجر</li>
+                                                    {% endif %}
+                                                </ul>
+                                            </div>
+                                            <div class="col-5 text-center">
+                                                {% if book.photo_book %}
+                                                    <img style="height: 120px; width: 120px;" src="{{ book.photo_book.url }}" alt="" class="img-circle img-fluid">
+                                                    
+                                                {% else %}
+                                                    <img style="width:100px; height: 100px;" class="img-circle elevation-2" src="{% static 'path/to/default-image.png' %}" alt="Default Avatar">
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer d-flex justify-content-between">
+                                        <a href="{% url 'update' book.id %}" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-edit"></i> تعديل
+                                        </a>
+                                        <a href="{% url 'delete_book' book.id %}" class="btn btn-sm btn-danger">
+                                            <i class="fas fa-trash"></i> حذف
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Book end -->
+                            {% endfor %}
+                        {% else %}
+                            <p>No books available.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- /.card-body -->
+                
+                <!-- Pagination controls -->
+                <div class="card-footer">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            {% if books.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1">&laquo;&laquo;</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ books.previous_page_number }}">&laquo;</a>
+                            </li>
+                            {% endif %}
+                            
+                            {% for num in books.paginator.page_range %}
+                                {% if num == books.number %}
+                                <li class="page-item active"><a class="page-link">{{ num }}</a></li>
+                                {% elif num > books.number|add:'-3' and num < books.number|add:'3' %}
+                                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                                {% endif %}
+                            {% endfor %}
+                            
+                            {% if books.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ books.next_page_number }}">&raquo;</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ books.paginator.num_pages }}">&raquo;&raquo;</a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <!-- /.card -->
+        </section>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+    {% include 'parts/sidebaradmin.html '%}
+
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div style="direction: rtl;" class="wrapper">
+    <div class="content-wrapper p-5">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>إضافة كتاب جديد</h1>
+            </div>
+        </div>
+        
+        <section class="content">
+            <div class="card card-solid">
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-primary">إضافة الكتاب</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+{% include 'parts/sidebaradmin.html '%}
+{% endblock %}

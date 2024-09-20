@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% include 'parts/navadmin.html' %}
+
+<div class="wrapper" style="direction: rtl;">
+    <div class="content-wrapper p-5">
+        <div class="row mb-4">
+            <div class="col-sm-6">
+                <h1 class="text-primary font-weight-bold">الكتب المستعارة</h1>
+            </div>
+        </div>
+
+        <!-- Currently Borrowed Books Section -->
+        <section class="content">
+            <div class="card border-0 shadow-lg rounded">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="card-title">الكتب المستعارة حالياً</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for borrow in current_borrows %}
+                        <div class="col-12 col-sm-6 col-md-4 mb-4">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body bg-light p-4">
+                                    <h4 class="lead text-dark"><b>{{ borrow.book.title }}</b></h4>
+                                    <h6 class="text-muted">{{ borrow.user.username }}</h6>
+                                    <div class="mt-2">
+                                        <span class="badge badge-info">تاريخ الاستعارة: {{ borrow.borrow_date }}</span>
+                                        <span class="badge badge-warning">تاريخ الإرجاع المتوقع: {{ borrow.due_date }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-center">لا توجد كتب مستعارة حالياً.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Borrow History Section -->
+        <section class="content mt-4">
+            <div class="card border-0 shadow-lg rounded">
+                <div class="card-header bg-secondary text-white">
+                    <h2 class="card-title">تاريخ الاستعارات</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for borrow in borrow_history %}
+                        <div class="col-12 col-sm-6 col-md-4 mb-4">
+                            <div class="card border-0 shadow-sm">
+                                <div class="card-body bg-light p-4">
+                                    <h4 class="lead text-dark"><b>{{ borrow.book.title }}</b></h4>
+                                    <h6 class="text-muted">{{ borrow.user.username }}</h6>
+                                    <div class="mt-2">
+                                        <span class="badge badge-info">تاريخ الاستعارة: {{ borrow.borrow_date }}</span>
+                                        <span class="badge badge-danger">تاريخ الإرجاع الفعلي: {{ borrow.return_date }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-center">لا توجد تاريخ استعارات.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+{% include 'parts/sidebaradmin.html' %}
+{% endblock %}

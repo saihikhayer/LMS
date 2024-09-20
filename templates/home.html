@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div style="direction: rtl;" class="wrapper">
+    <div class="content-wrapper p-5">
+        <h1>الصفحة الرئيسية</h1>
+        
+        <!-- Recent Books Section -->
+        <section class="recent-books">
+            <h2>الكتب المتاحة حديثًا</h2>
+            <div class="row d-flex align-items-stretch">
+                {% for book in recent_books %}
+                <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch">
+                    <div class="card bg-light">
+                        <div class="card-header text-muted border-bottom-0">
+                            {{ book.category.name }}
+                        </div>
+                        <div class="card-body pt-0">
+                            <div class="row">
+                                <div class="col-7">
+                                    <h2 class="lead"><b>{{ book.title }}</b></h2>
+                                    <ul class="fa-ul text-muted">
+                                        <li class="small"><span class="fa-li"></span>الحالة: {{ book.status }}</li>
+                                        <li class="small"><span class="fa-li"></span>عدد الصفحات: {{ book.pages }}</li>
+                                        <li class="small"><span class="fa-li"></span>عدد النسخ المتاحة: {{ book.available_copies }}</li>
+                                    </ul>
+                                </div>
+                                <div class="col-5 text-center">
+                                    {% if book.photo_author %}
+                                        <img style="height: 120px; width: 120px;" src="{{ book.photo_author.url }}" alt="" class="img-circle img-fluid">
+                                        
+                                    {% else %}
+                                        <img style="width:100px; height: 100px;" class="img-circle elevation-2" src="{% static 'default_image_path/default_book.png' %}" alt="Default Avatar">
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    
+                    </div>
+                </div>
+                {% empty %}
+                <p>لا توجد كتب متاحة حديثًا.</p>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Categories Section -->
+        <section class="book-categories">
+            <h2>تصنيفات الكتب</h2>
+            <div class="list-group">
+                {% for category in categories %}
+                <a href="{% url 'books_by_category' category.id %}" class="list-group-item list-group-item-action">
+                    {{ category.name }}
+                </a>
+                {% empty %}
+                <p>لا توجد تصنيفات حالياً.</p>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Quick Links Section -->
+        <section class="quick-links">
+            <h2>روابط سريعة</h2>
+            <ul class="list-group">
+                <li class="list-group-item"><a href="{% url 'student_login' %}"> تسجيل الدخول كطالب</a></li>
+                <li class="list-group-item"><a href="{% url 'admin_login' %}">تسجيل الدخول كمشرف </a></li>
+               
+                
+            </ul>
+        </section>
+    </div>
+</div>
+{% include 'parts/sidebaradmin.html '%}
+{% endblock %}

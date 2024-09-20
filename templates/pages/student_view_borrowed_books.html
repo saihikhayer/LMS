@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+{% include 'parts/nav.html '%}
+<div class="wrapper" style="direction: rtl;">
+    <div class="content-wrapper p-5">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>الكتب المستعارة</h1>
+            </div>
+        </div>
+        <section class="content">
+            <div class="card card-solid">
+                <div class="card-body pb-0">
+                    <div class="row d-flex align-items-stretch">
+                        {% for borrow in borrowed_books %}
+                        <div class="col-12 col-sm-6 col-md-4 d-flex align-items-stretch">
+                            <div class="card bg-light">
+                                <div class="card-header text-muted border-bottom-0">
+                                    {{ borrow.book.title }}
+                                </div>
+                                <div class="card-body pt-0">
+                                    <div class="row">
+                                        <div class="col-7">
+                                            <h2 class="lead"><b>قرض: {{ borrow.book.title }}</b></h2>
+                                            <ul class="fa-ul text-muted">
+                                                <li class="small"><span class="fa-li"></span>تاريخ الاستعارة: {{ borrow.borrow_date }}</li>
+                                                <li class="small"><span class="fa-li"></span>تاريخ الإرجاع المتوقع: {{ borrow.due_date }}</li>
+                                                <li class="small"><span class="fa-li"></span>تاريخ الإرجاع الفعلي: {{ borrow.return_date }}</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-5 text-center">
+                                            <a href="{% url 'return_book' borrow.id %}" class="btn btn-danger">إرجاع</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+{% include 'parts/sidebar.html '%}
+
+{% endblock %}

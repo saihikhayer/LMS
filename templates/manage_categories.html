@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+{% include 'parts/navadmin.html '%}
+
+<div style="direction: rtl;" class="wrapper">
+    <div class="content-wrapper p-5">
+        <div class="row mb-2">
+            <div class="col-sm-6">
+                <h1>إدارة التصنيفات</h1>
+            </div>
+        </div>
+        
+        <section class="content">
+            <div class="card card-solid">
+                <div class="card-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-primary">إضافة تصنيف</button>
+                    </form>
+                    <hr>
+                    <h3>القائمة الحالية للتصنيفات</h3>
+                    <ul>
+                        {% for category in categories %}
+                            <li>{{ category.name }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+{% include 'parts/sidebaradmin.html '%}
+
+{% endblock %}
