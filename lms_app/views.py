@@ -450,40 +450,6 @@ def student_login(request):
 
 
 
-from django.http import HttpResponse
-from reportlab.pdfgen import canvas
-from .models import Borrow
-
-@login_required
-def generate_borrow_history_pdf(request):
-    # Create a file-like buffer to receive PDF data.
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="borrow_history.pdf"'
-
-    # Create the PDF object, using the response object as its "file."
-    p = canvas.Canvas(response)
-
-    # Start writing the PDF.
-    p.drawString(100, 800, "Borrow History Report")
-
-    # Fetch borrow history
-    borrow_history = Borrow.objects.filter(return_date__isnull=False).order_by('-borrow_date')
-    
-    y_position = 760  # Start below the title
-    for borrow in borrow_history:
-        p.drawString(100, y_position, f"Book: {borrow.book.title}, User: {borrow.user.username}, Borrow Date: {borrow.borrow_date}, Return Date: {borrow.return_date}")
-        y_position -= 20  # Move down for the next record
-
-        # If we go too low, create a new page
-        if y_position < 50:
-            p.showPage()
-            y_position = 800
-
-    # Close the PDF object cleanly, and we're done.
-    p.showPage()
-    p.save()
-    return response
-
 
 
 # views.py
