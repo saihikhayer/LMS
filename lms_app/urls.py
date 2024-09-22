@@ -27,7 +27,7 @@ urlpatterns = [
            path('books_by_category/<int:category_id>/', views.books_by_category, name='books_by_category'),
            path('categories/<int:category_id>/', views.books_by_category, name='books_by_category'),
            path('books_by_category/', views.books_by_category, name='books_by_category'),
-            path('admin/borrow-history/pdf/', views.generate_borrow_history_pdf, name='generate_borrow_history_pdf'),
+          
             path('admin/logout/', auth_views.LogoutView.as_view(next_page='admin_login'), name='admin_logout'),
     
     # Student logout
